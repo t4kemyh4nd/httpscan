@@ -7,9 +7,9 @@ import (
 )
 
 func main() {
-	r := fuzzer.TCPeditor{Host: "127.0.0.1:8000", Path: "/POST", HttpVersion: "1.1", Headers: []string{"Content-Type: application/x-www-form-urlencoded", "Content-Length: 12"}, Method: "POST", Body: "input2=ameya"}
-	var sc, resp = r.MakeRequest()
-	fmt.Println(sc, string(resp))
+	HostResults := &fuzzer.HostBehavior{}
+	HostResults.WhichHostProcessed = fuzzer.WhichHostProcessed("127.0.0.1:80")
+	fmt.Println(HostResults.WhichHostProcessed)
 }
 
 func fuzzHostHeader(url string) *fuzzer.HostBehavior {

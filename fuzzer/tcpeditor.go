@@ -9,6 +9,7 @@ import (
 )
 
 type TCPeditor struct {
+	Server      string
 	Method      string
 	Host        string
 	Path        string
@@ -17,8 +18,8 @@ type TCPeditor struct {
 	Body        string
 }
 
-func (t TCPeditor) MakeRequest() (string, []byte) {
-	conn, err := net.Dial("tcp", t.Host)
+func (t TCPeditor) MakeRequest() (string, string) {
+	conn, err := net.Dial("tcp", t.Server)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -54,5 +55,5 @@ func (t TCPeditor) MakeRequest() (string, []byte) {
 
 	conn.Close()
 
-	return strings.Split(lines[0], " ")[1], response
+	return strings.Split(lines[0], " ")[1], string(response)
 }
