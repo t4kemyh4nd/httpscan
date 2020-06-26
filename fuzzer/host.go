@@ -4,29 +4,32 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net"
 	"strings"
 )
 
 type TCPeditor struct {
-	HttpVersion string
 	Method      string
 	Host        string
 	Path        string
 	Headers     []string
+	HttpVersion string
 }
 
-func (t TCPeditor) MakeRequest() (string, string) {
+func (t TCPeditor) MakeRequest() (string, []byte) {
 	conn, err := net.Dial("tcp", t.Host)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	defer conn.Close()
-
 	var request strings.Builder
-	request.WriteString(fmt.Sprintf("%s %s HTTP/%s\r\n", t.Method, t.Path, t.HttpVersion))
+	if t.HttpVersion == "1.1" {
+		request.WriteString(fmt.Sprintf("%s %s HTTP/1.1\r\nConnection: close\r\n", t.Method, t.Path))
+	} else {
+		request.WriteString(fmt.Sprintf("%s %s HTTP/%s\r\n", t.Method, t.Path, t.HttpVersion))
+	}
 	request.WriteString(fmt.Sprintf("Host: %s\r\n", t.Host))
 	if len(t.Headers) != 0 {
 		for _, v := range t.Headers {
@@ -37,29 +40,16 @@ func (t TCPeditor) MakeRequest() (string, string) {
 
 	fmt.Fprintf(conn, request.String())
 
-	status, err := bufio.NewReader(conn).ReadString('\n')
+	response, err := ioutil.ReadAll(conn)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	line := strings.Split(status, " ")
-	statusCode := line[1]
+	lines := strings.Split(string(response), "\n")
 
-	buf := make([]byte, 0, 4096)
-	tmp := make([]byte, 256)
-	for {
-		n, err := conn.Read(tmp)
-		if err != nil {
-			if err != io.EOF {
-				log.Println("read error:", err)
-			}
-			break
-		}
-		buf = append(buf, tmp[:n]...)
-	}
-	response := string(buf)
+	conn.Close()
 
-	return statusCode, response
+	return strings.Split(lines[0], " ")[1], response
 }
 
 func MultipleHostsAllowed(url string) bool {
