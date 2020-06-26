@@ -16,6 +16,7 @@ type TCPeditor struct {
 	Path        string
 	Headers     []string
 	HttpVersion string
+	Body        string
 }
 
 func (t TCPeditor) MakeRequest() (string, []byte) {
@@ -36,7 +37,13 @@ func (t TCPeditor) MakeRequest() (string, []byte) {
 			request.WriteString(v + "\r\n")
 		}
 	}
-	request.WriteString("\r\n") //ending HTTP request
+
+	if t.Body == "" {
+		request.WriteString("\r\n") //ending HTTP request without a body
+	} else {
+		request.WriteString("\r\n")
+		request.WriteString(t.Body)
+	}
 
 	fmt.Fprintf(conn, request.String())
 
