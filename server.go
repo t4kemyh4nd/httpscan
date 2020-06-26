@@ -14,7 +14,7 @@ func main() {
 	http.HandleFunc("/headers", HeadersHandler)
 	http.HandleFunc("/host", HostHandler)
 	http.HandleFunc("/cookie", CookieHandler)
-	log.Fatal(http.ListenAndServe(":8000", nil))
+	log.Fatal(http.ListenAndServe(":80", nil))
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
