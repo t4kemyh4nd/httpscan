@@ -17,6 +17,7 @@ type HostBehavior struct {
 	WhichHostProcessed         [3]int
 	ValidCharsInHostHeader     [3][]string
 	ValidCharsInHostHeaderPort [3][]string
+	NoHost                     [3]bool
 }
 
 type BasicBehavior struct {
@@ -36,4 +37,15 @@ type BasicBehavior struct {
 	// Invalid HTTP version section
 	/*	V100			bool
 	 */
+}
+
+type ParametersBehavior struct {
+	FormencodedToMultipart                    [3]bool
+	FormencodedToMultipartMissingLastBoundary [3]bool
+	FormencodedToMultipartWithLF              [3]bool
+	FormencodedToMultipartWithoutFormdata     [3]bool
+	FormencodedToMultipartNameBeforeFD        [3]bool
+	MultipleGETParametersSameName             [3]int
+	MultiplePOSTParametersSameName            [3]int
+	MultipleCookiesParametersSameName         [3]int
 }

@@ -2,6 +2,9 @@ package fuzzer
 
 import (
 	"fmt"
+	"io/ioutil"
+	"log"
+	"net"
 	"strings"
 )
 
@@ -94,4 +97,29 @@ func ValidCharsInHostHeaderPort(server string, httpv string) []string {
 
 	fmt.Println("Done...")
 	return acceptedChars
+}
+
+func NoHost(server, httpv string) bool {
+	fmt.Println("Checking behavior with no host header...")
+	conn, err := net.Dial("tcp", server)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Fprintf(conn, "GET /host HTTP/%s\r\n\r\n", httpv)
+
+	response, err := ioutil.ReadAll(conn)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	lines := strings.Split(string(response), "\n")
+
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered in f", r)
+		}
+	}()
+
+	return strings.Split(lines[0], " ")[1] == "200"
 }

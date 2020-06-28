@@ -45,6 +45,8 @@ func (t TCPeditor) MakeRequest() (string, string) {
 		request.WriteString(t.Body)
 	}
 
+	defer conn.Close()
+
 	fmt.Fprintf(conn, request.String())
 
 	response, err := ioutil.ReadAll(conn)
@@ -53,8 +55,6 @@ func (t TCPeditor) MakeRequest() (string, string) {
 	}
 
 	lines := strings.Split(string(response), "\n")
-
-	conn.Close()
 
 	return strings.Split(lines[0], " ")[1], string(response)
 }

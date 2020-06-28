@@ -16,6 +16,9 @@ func main() {
 	bb = fuzzBasic("127.0.0.1:80", "input2=Testing&input3=Fuzzer", "application/x-www-form-urlencoded")
 	fmt.Println(bb)
 
+	pb := &fuzzer.ParametersBehavior{}
+	pb = fuzzParameters("127.0.0.1:80")
+	fmt.Println(pb)
 }
 
 func fuzzHostHeader(URL string) *fuzzer.HostBehavior {
@@ -32,6 +35,7 @@ func fuzzHostHeader(URL string) *fuzzer.HostBehavior {
 		}
 		HostResults.ValidCharsInHostHeader[i] = fuzzer.ValidCharsInHostHeader(URL, HTTPVersion[i])
 		HostResults.ValidCharsInHostHeaderPort[i] = fuzzer.ValidCharsInHostHeaderPort(URL, HTTPVersion[i])
+		HostResults.NoHost[i] = fuzzer.NoHost(URL, HTTPVersion[i])
 	}
 
 	return HostResults
@@ -70,4 +74,27 @@ func initiateInvalidHTTP(URL string, postData string) {
 		fmt.Println("\nTesting " + InvalidVersions[i])
 		fmt.Println(fuzzer.InvalidHTTPv(URL, InvalidVersions[i], "GET", ""))
 	}
+}
+
+func fuzzParameters(URL string) *fuzzer.ParametersBehavior {
+	fmt.Println("--------FUZZING PARAMETER BEHAVIOR NOW--------")
+	ParameterResults := &fuzzer.ParametersBehavior{}
+
+	HTTPVersion := []string{"1.1", "1.0", "0.9"}
+
+	for i := 0; i < len(HTTPVersion); i++ {
+		fmt.Println("Checking for HTTP version " + HTTPVersion[i])
+		ParameterResults.FormencodedToMultipart[i] = fuzzer.FormencodedToMultipart(URL, HTTPVersion[i])
+		if ParameterResults.FormencodedToMultipart[i] {
+			ParameterResults.FormencodedToMultipartMissingLastBoundary[i] = fuzzer.FormencodedToMultipartMissingLastBoundary(URL, HTTPVersion[i])
+			ParameterResults.FormencodedToMultipartWithLF[i] = fuzzer.FormencodedToMultipartWithLF(URL, HTTPVersion[i])
+			ParameterResults.FormencodedToMultipartWithoutFormdata[i] = fuzzer.FormencodedToMultipartWithoutFormdata(URL, HTTPVersion[i])
+			ParameterResults.FormencodedToMultipartNameBeforeFD[i] = fuzzer.FormencodedToMultipartNameBeforeFD(URL, HTTPVersion[i])
+		}
+		ParameterResults.MultipleGETParametersSameName[i] = fuzzer.MultipleGETParametersSameName(URL, HTTPVersion[i])
+		ParameterResults.MultiplePOSTParametersSameName[i] = fuzzer.MultiplePOSTParametersSameName(URL, HTTPVersion[i])
+		ParameterResults.MultipleCookiesParametersSameName[i] = fuzzer.MultipleCookiesParametersSameName(URL, HTTPVersion[i])
+	}
+
+	return ParameterResults
 }
