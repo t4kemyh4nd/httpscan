@@ -30,46 +30,36 @@ func fuzzHostHeader(URL string) *fuzzer.HostBehavior {
 	return HostResults
 }
 
-func fuzzBasic(URL string, postData string, contentType string) *fuzzer.BasicBehavior{
+func fuzzBasic(URL string, postData string, contentType string) *fuzzer.BasicBehavior {
 
 	BasicResults := &fuzzer.BasicBehavior{}
 
 	// This array SHOULD be consistent with the BasicBehavior struct in results.go
-	HTTPVersion := []string{"1.1","1.0","0.9"}
+	HTTPVersion := []string{"1.1", "1.0", "0.9"}
 
-	for i:=0;i<len(HTTPVersion);i++{
-		BasicResults.NoCL[i] = fuzzer.NoContentLength(URL,postData,contentType,HTTPVersion[i])
-		BasicResults.MultipleCLFirst[i] = fuzzer.MultipleWrongFirst(URL,postData,contentType,HTTPVersion[i])
-		BasicResults.MultipleCLSecond[i] = fuzzer.MultipleWrongSecond(URL,postData,contentType,HTTPVersion[i])
-		BasicResults.SmallCL[i] = fuzzer.SmallerCL(URL,postData,contentType,HTTPVersion[i])
+	for i := 0; i < len(HTTPVersion); i++ {
+		BasicResults.NoCL[i] = fuzzer.NoContentLength(URL, postData, contentType, HTTPVersion[i])
+		BasicResults.MultipleCLFirst[i] = fuzzer.MultipleWrongFirst(URL, postData, contentType, HTTPVersion[i])
+		BasicResults.MultipleCLSecond[i] = fuzzer.MultipleWrongSecond(URL, postData, contentType, HTTPVersion[i])
+		BasicResults.SmallCL[i] = fuzzer.SmallerCL(URL, postData, contentType, HTTPVersion[i])
 		// Checks POST requests with the a larger content-length
 		// IMPLEMENT A TIMEOUT FOR THE FUNCTION
 		//BasicResults.LargeCL[i] = fuzzer.LargerCL(URL,postData,contentType,HTTPVersion[i])
 	}
 
-	fmt.Print(BasicResults.NoCL, BasicResults.MultipleCLFirst, BasicResults.MultipleCLSecond, BasicResults.SmallCL)
-
 	return BasicResults
 }
 
 // COMPLETE LATER
-func initiateInvalidHTTP(URL string, postData string){
+func initiateInvalidHTTP(URL string, postData string) {
 
 	// Add invalid HTTP values
 	//BasicResults := &fuzzer.BasicBehavior{}
 
-	InvalidVersions := []string{"1.1","1.10000000","1.19","2.0",".9","0.99","9.9","00000001.1","1.10"}
+	InvalidVersions := []string{"1.1", "1.10000000", "1.19", "2.0", ".9", "0.99", "9.9", "00000001.1", "1.10"}
 
-	GetResults := []bool{}
-	PostResults := []bool{}
-
-	for i:=0;i<len(InvalidVersions);i++{
+	for i := 0; i < len(InvalidVersions); i++ {
 		fmt.Println("\nTesting " + InvalidVersions[i])
-		GetResults = append(GetResults, fuzzer.InvalidHTTPv(URL,InvalidVersions[i],"GET", ""))
-		//PostResults = append(PostResults, fuzzer.InvalidHTTPv(URL,InvalidVersions[i],"POST",postData))
+		fmt.Println(fuzzer.InvalidHTTPv(URL, InvalidVersions[i], "GET", ""))
 	}
-
-	fmt.Print(GetResults,PostResults)	
-
 }
-

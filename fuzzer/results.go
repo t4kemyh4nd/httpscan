@@ -1,5 +1,17 @@
 package fuzzer
 
+import "strings"
+
+//Exported function to check if invalid request hits the server or just the proxy
+func HitsServer(sc string, res string) bool {
+	if sc != "200" && sc[0] == '4' {
+		if strings.Contains(res, "Server: ") {
+			return true
+		}
+	}
+	return false
+}
+
 type HostBehavior struct {
 	MultipleHostsAllowed       bool
 	WhichHostProcessed         int
@@ -9,36 +21,19 @@ type HostBehavior struct {
 
 type BasicBehavior struct {
 
-// Content length section
+	// Content length section
 
 	// Based on the array indices:
 	// 0 - HTTP 1.1
 	// 1 - HTTP 1.0
 	// 2 - HTTP 0.9
-	NoCL	        	[3]bool
-	MultipleCLFirst 	[3]bool
-	MultipleCLSecond 	[3]bool
-	SmallCL      		[3]bool
-	LargeCL		      	[3]bool
+	NoCL             [3][]bool
+	MultipleCLFirst  [3][]bool
+	MultipleCLSecond [3][]bool
+	SmallCL          [3][]bool
+	LargeCL          [3][]bool
 
-// Invalid HTTP version section
-
-/*	V100			bool
-	V001			bool
-	V110			bool
-	V119			bool
-	V20			bool
-	V9			bool
-	V099			bool
-	V99			bool
-
-	PV100			bool
-	PV001			bool
-	PV110			bool
-	PV119			bool
-	PV20			bool
-	PV9			bool
-	PV099			bool
-	PV99			bool
-*/
+	// Invalid HTTP version section
+	/*	V100			bool
+	 */
 }

@@ -72,7 +72,7 @@ func ValidCharsInHostHeader(server string) []string {
 		r.HttpVersion = "1.1"
 		r.Host = strings.Split(server, ":")[0] + string(char)
 		sc, res := r.MakeRequest()
-		if sc == "200" && strings.Contains(res, strings.Split(server, ":")[0]+string(char)) {
+		if sc == "200" && strings.Contains(strings.Split(res, "\r\n\r\n")[1], strings.Split(server, ":")[0]+string(char)) {
 			acceptedChars = append(acceptedChars, char)
 		}
 	}
@@ -93,7 +93,7 @@ func ValidCharsInHostHeaderPort(server string) []string {
 		r.HttpVersion = "1.1"
 		r.Host = server + string(char)
 		sc, res := r.MakeRequest()
-		if sc == "200" && strings.Contains(res, server+string(char)) {
+		if sc == "200" && strings.Contains(strings.Split(res, "\r\n\r\n")[1], server+string(char)) {
 			acceptedChars = append(acceptedChars, char)
 		}
 	}

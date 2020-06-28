@@ -16,6 +16,7 @@ type TCPeditor struct {
 	Headers     []string
 	HttpVersion string
 	Body        string
+	HitsProxy   bool
 }
 
 func (t TCPeditor) MakeRequest() (string, string) {
