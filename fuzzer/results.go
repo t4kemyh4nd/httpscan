@@ -68,4 +68,5 @@ type ParametersBehavior struct {
 	URLEncodedCharsInCookieParametersValue    [3]bool
 	IgnoredCharsBeforeGETParameters           [3][]string
 	IgnoredCharsBetweenGETParameters          [3][]string
+	IgnoredCharsAfterGETParameters            [3][]string
 }

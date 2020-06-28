@@ -341,7 +341,7 @@ func IgnoredCharsBeforeGETParameters(server, httpv string) []string {
 }
 
 func IgnoredCharsBetweenGETParameters(server, httpv string) []string {
-	fmt.Println("Checking for ignored chars before GET parameters...")
+	fmt.Println("Checking for ignored chars between GET parameters...")
 
 	payloads := GeneratePayloads() //Chars to test here
 	results := []string{}
@@ -358,6 +358,32 @@ func IgnoredCharsBetweenGETParameters(server, httpv string) []string {
 		sc, res := r.MakeRequest()
 
 		if sc == "200" && strings.Contains(strings.Split(res, "\r\n\r\n")[1], "foo") && strings.Contains(strings.Split(res, "\r\n\r\n")[1], "bar") {
+			results = append(results, chars)
+		}
+	}
+
+	return results
+}
+
+func IgnoredCharsAfterGETParameters(server, httpv string) []string {
+	fmt.Println("Checking for ignored chars after GET parameters...")
+
+	payloads := GeneratePayloads() //Chars to test here
+	results := []string{}
+
+	r := TCPeditor{}
+
+	r.Server = server
+	r.Method = "GET"
+	r.HttpVersion = httpv
+	r.Host = server
+	for _, chars := range payloads {
+		char, _ := url.PathUnescape(chars)
+		r.Path = "/GET?input0=foo&input1=bar" + char
+		sc, res := r.MakeRequest()
+
+		//Checks if the response body ENDS with "bar"
+		if sc == "200" && strings.Contains(strings.Split(res, "\r\n\r\n")[1], "foo") && strings.HasSuffix(strings.Split(res, "\r\n\r\n")[1], "bar") {
 			results = append(results, chars)
 		}
 	}

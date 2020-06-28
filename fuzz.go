@@ -100,6 +100,7 @@ func fuzzParameters(URL string) *fuzzer.ParametersBehavior {
 		ParameterResults.URLEncodedCharsInCookieParametersValue[i] = fuzzer.URLEncodedCharsInCookieParametersValue(URL, HTTPVersion[i])
 		ParameterResults.IgnoredCharsBeforeGETParameters[i] = fuzzer.IgnoredCharsBeforeGETParameters(URL, HTTPVersion[i])
 		ParameterResults.IgnoredCharsBetweenGETParameters[i] = fuzzer.IgnoredCharsBetweenGETParameters(URL, HTTPVersion[i])
+		ParameterResults.IgnoredCharsAfterGETParameters[i] = fuzzer.IgnoredCharsAfterGETParameters(URL, HTTPVersion[i])
 	}
 
 	return ParameterResults
