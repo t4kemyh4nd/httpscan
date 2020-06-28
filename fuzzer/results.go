@@ -7,8 +7,8 @@ import (
 
 //Generate URL encoded payloads here
 func GeneratePayloads() []string {
-	payloads := []string{}
-	for i := 0; i <= 256; i++ {
+	payloads := []string{"%00", "%01", "%02", "%03", "%04", "%05", "%06", "%07", "%08", "%09", "%0a", "%0b", "%0c", "%0d", "%0e", "%0f"}
+	for i := 16; i <= 256; i++ {
 		h := fmt.Sprintf("%%"+"%x", i)
 		payloads = append(payloads, h)
 	}
@@ -66,4 +66,6 @@ type ParametersBehavior struct {
 	IgnoredCharsInCookieParametersValue       [3][]string
 	URLEncodedCharsInCookieParameters         [3]bool
 	URLEncodedCharsInCookieParametersValue    [3]bool
+	IgnoredCharsBeforeGETParameters           [3][]string
+	IgnoredCharsBetweenGETParameters          [3][]string
 }

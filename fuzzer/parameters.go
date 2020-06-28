@@ -188,7 +188,7 @@ func ValidSeparatorsForGETParameters(server, httpv string) []string {
 		sc, res := r.MakeRequest()
 
 		if sc == "200" && strings.Contains(strings.Split(res, "\r\n\r\n")[1], "foo") && strings.Contains(strings.Split(res, "\r\n\r\n")[1], "bar") {
-			results = append(results, char)
+			results = append(results, chars)
 		}
 	}
 
@@ -216,7 +216,7 @@ func ValidSeparatorsForPOSTParameters(server, httpv string) []string {
 		sc, res := r.MakeRequest()
 
 		if sc == "200" && strings.Contains(strings.Split(res, "\r\n\r\n")[1], "foo") && strings.Contains(strings.Split(res, "\r\n\r\n")[1], "bar") {
-			results = append(results, char)
+			results = append(results, chars)
 		}
 	}
 
@@ -242,7 +242,7 @@ func IgnoredCharsInCookieParameters(server, httpv string) []string {
 		sc, res := r.MakeRequest()
 
 		if sc == "200" && strings.Contains(strings.Split(res, "\r\n\r\n")[1], "foobar") {
-			results = append(results, char)
+			results = append(results, chars)
 		}
 	}
 
@@ -268,7 +268,7 @@ func IgnoredCharsInCookieParametersValue(server, httpv string) []string {
 		sc, res := r.MakeRequest()
 
 		if sc == "200" && strings.Contains(strings.Split(res, "\r\n\r\n")[1], "foobar") {
-			results = append(results, char)
+			results = append(results, chars)
 		}
 	}
 
@@ -313,4 +313,54 @@ func URLEncodedCharsInCookieParametersValue(server, httpv string) bool {
 	}
 
 	return false
+}
+
+func IgnoredCharsBeforeGETParameters(server, httpv string) []string {
+	fmt.Println("Checking for ignored chars before GET parameters...")
+
+	payloads := GeneratePayloads() //Chars to test here
+	results := []string{}
+
+	r := TCPeditor{}
+
+	r.Server = server
+	r.Method = "GET"
+	r.HttpVersion = httpv
+	r.Host = server
+	for _, chars := range payloads {
+		char, _ := url.PathUnescape(chars)
+		r.Path = "/GET?" + char + "input0=foo&input1=bar"
+		sc, res := r.MakeRequest()
+
+		if sc == "200" && strings.Contains(strings.Split(res, "\r\n\r\n")[1], "foo") && strings.Contains(strings.Split(res, "\r\n\r\n")[1], "bar") {
+			results = append(results, chars)
+		}
+	}
+
+	return results
+}
+
+func IgnoredCharsBetweenGETParameters(server, httpv string) []string {
+	fmt.Println("Checking for ignored chars before GET parameters...")
+
+	payloads := GeneratePayloads() //Chars to test here
+	results := []string{}
+
+	r := TCPeditor{}
+
+	r.Server = server
+	r.Method = "GET"
+	r.HttpVersion = httpv
+	r.Host = server
+	for _, chars := range payloads {
+		char, _ := url.PathUnescape(chars)
+		r.Path = "/GET?inp" + char + "ut0=foo&input1=bar"
+		sc, res := r.MakeRequest()
+
+		if sc == "200" && strings.Contains(strings.Split(res, "\r\n\r\n")[1], "foo") && strings.Contains(strings.Split(res, "\r\n\r\n")[1], "bar") {
+			results = append(results, chars)
+		}
+	}
+
+	return results
 }

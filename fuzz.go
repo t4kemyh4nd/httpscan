@@ -98,7 +98,8 @@ func fuzzParameters(URL string) *fuzzer.ParametersBehavior {
 		ParameterResults.IgnoredCharsInCookieParameters[i] = fuzzer.IgnoredCharsInCookieParameters(URL, HTTPVersion[i])
 		ParameterResults.URLEncodedCharsInCookieParameters[i] = fuzzer.URLEncodedCharsInCookieParameters(URL, HTTPVersion[i])
 		ParameterResults.URLEncodedCharsInCookieParametersValue[i] = fuzzer.URLEncodedCharsInCookieParametersValue(URL, HTTPVersion[i])
-
+		ParameterResults.IgnoredCharsBeforeGETParameters[i] = fuzzer.IgnoredCharsBeforeGETParameters(URL, HTTPVersion[i])
+		ParameterResults.IgnoredCharsBetweenGETParameters[i] = fuzzer.IgnoredCharsBetweenGETParameters(URL, HTTPVersion[i])
 	}
 
 	return ParameterResults
