@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net"
+	"net/url"
 	"strings"
 )
 
@@ -80,14 +81,15 @@ func ValidCharsInHostHeader(server string, httpv string) []string {
 
 func ValidCharsInHostHeaderPort(server string, httpv string) []string {
 	fmt.Println("Now fuzzing host header port for accepted chars...")
-	payloads := []string{"#", "@", "aa"} //add chars to be tested here
+	payloads := GeneratePayloads()
 	acceptedChars := []string{}
-	for _, char := range payloads {
+	for _, chars := range payloads {
 		r := TCPeditor{}
 		r.Server = server
 		r.Method = "GET"
 		r.Path = "/host"
 		r.HttpVersion = httpv
+		char, _ := url.PathUnescape(chars)
 		r.Host = server + string(char)
 		sc, res := r.MakeRequest()
 		if sc == "200" && strings.Contains(strings.Split(res, "\r\n\r\n")[1], server+string(char)) {

@@ -94,6 +94,11 @@ func fuzzParameters(URL string) *fuzzer.ParametersBehavior {
 		ParameterResults.MultipleGETParametersSameName[i] = fuzzer.MultipleGETParametersSameName(URL, HTTPVersion[i])
 		ParameterResults.MultiplePOSTParametersSameName[i] = fuzzer.MultiplePOSTParametersSameName(URL, HTTPVersion[i])
 		ParameterResults.MultipleCookiesParametersSameName[i] = fuzzer.MultipleCookiesParametersSameName(URL, HTTPVersion[i])
+		ParameterResults.ValidSeparatorsForGETParameters[i] = fuzzer.ValidSeparatorsForGETParameters(URL, HTTPVersion[i])
+		ParameterResults.IgnoredCharsInCookieParameters[i] = fuzzer.IgnoredCharsInCookieParameters(URL, HTTPVersion[i])
+		ParameterResults.URLEncodedCharsInCookieParameters[i] = fuzzer.URLEncodedCharsInCookieParameters(URL, HTTPVersion[i])
+		ParameterResults.URLEncodedCharsInCookieParametersValue[i] = fuzzer.URLEncodedCharsInCookieParametersValue(URL, HTTPVersion[i])
+
 	}
 
 	return ParameterResults

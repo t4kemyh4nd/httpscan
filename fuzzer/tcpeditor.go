@@ -56,5 +56,8 @@ func (t TCPeditor) MakeRequest() (string, string) {
 
 	lines := strings.Split(string(response), "\n")
 
-	return strings.Split(lines[0], " ")[1], string(response)
+	if len(response) > 0 {
+		return strings.Split(lines[0], " ")[1], string(response)
+	}
+	return "000", ""
 }

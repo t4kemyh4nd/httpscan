@@ -2,6 +2,7 @@ package fuzzer
 
 import (
 	"fmt"
+	"net/url"
 	"strings"
 )
 
@@ -167,4 +168,149 @@ func MultipleCookiesParametersSameName(server, httpv string) int {
 		return 2
 	}
 	return 0
+}
+
+func ValidSeparatorsForGETParameters(server, httpv string) []string {
+	fmt.Println("Checking for valid separators in GET parameters...")
+
+	payloads := GeneratePayloads() //Chars to test here
+	results := []string{}
+
+	r := TCPeditor{}
+
+	r.Server = server
+	r.Method = "GET"
+	r.HttpVersion = httpv
+	r.Host = server
+	for _, chars := range payloads {
+		char, _ := url.PathUnescape(chars)
+		r.Path = "/GET?input0=foo" + char + "input1=bar"
+		sc, res := r.MakeRequest()
+
+		if sc == "200" && strings.Contains(strings.Split(res, "\r\n\r\n")[1], "foo") && strings.Contains(strings.Split(res, "\r\n\r\n")[1], "bar") {
+			results = append(results, char)
+		}
+	}
+
+	return results
+}
+
+func ValidSeparatorsForPOSTParameters(server, httpv string) []string {
+	fmt.Println("Checking for valid separators in POST parameters...")
+
+	payloads := GeneratePayloads() //Chars to test here
+	results := []string{}
+
+	r := TCPeditor{}
+
+	r.Server = server
+	r.Method = "GET"
+	r.HttpVersion = httpv
+	r.Host = server
+	r.Path = "/POST"
+	r.Headers = []string{"Content-Type: application/x-www-form-urlencoded", "Content-Length: 21"}
+
+	for _, chars := range payloads {
+		char, _ := url.PathUnescape(chars)
+		r.Body = "input2=foo" + char + "input3=bar"
+		sc, res := r.MakeRequest()
+
+		if sc == "200" && strings.Contains(strings.Split(res, "\r\n\r\n")[1], "foo") && strings.Contains(strings.Split(res, "\r\n\r\n")[1], "bar") {
+			results = append(results, char)
+		}
+	}
+
+	return results
+}
+
+func IgnoredCharsInCookieParameters(server, httpv string) []string {
+	fmt.Println("Checking for ignored chars in cookie names...")
+
+	payloads := GeneratePayloads() //Chars to test here
+	results := []string{}
+
+	r := TCPeditor{}
+
+	r.Server = server
+	r.Method = "GET"
+	r.HttpVersion = httpv
+	r.Host = server
+	r.Path = "/cookie"
+	for _, chars := range payloads {
+		char, _ := url.PathUnescape(chars)
+		r.Headers = []string{"Cookie: inpu" + char + "t4: foobar"}
+		sc, res := r.MakeRequest()
+
+		if sc == "200" && strings.Contains(strings.Split(res, "\r\n\r\n")[1], "foobar") {
+			results = append(results, char)
+		}
+	}
+
+	return results
+}
+
+func IgnoredCharsInCookieParametersValue(server, httpv string) []string {
+	fmt.Println("Checking for ignored chars in cookie values...")
+
+	payloads := GeneratePayloads() //Chars to test here
+	results := []string{}
+
+	r := TCPeditor{}
+
+	r.Server = server
+	r.Method = "GET"
+	r.HttpVersion = httpv
+	r.Host = server
+	r.Path = "/cookie"
+	for _, chars := range payloads {
+		char, _ := url.PathUnescape(chars)
+		r.Headers = []string{"Cookie: input4: fo" + char + "obar"}
+		sc, res := r.MakeRequest()
+
+		if sc == "200" && strings.Contains(strings.Split(res, "\r\n\r\n")[1], "foobar") {
+			results = append(results, char)
+		}
+	}
+
+	return results
+}
+
+func URLEncodedCharsInCookieParameters(server, httpv string) bool {
+	fmt.Println("Checking if URL encoding allowed in cookie name...")
+
+	r := TCPeditor{}
+
+	r.Server = server
+	r.Method = "GET"
+	r.HttpVersion = httpv
+	r.Host = server
+	r.Path = "/cookie"
+	r.Headers = []string{"Cookie: %69%6e%70%75%74%34: foobar"}
+	sc, res := r.MakeRequest()
+
+	if sc == "200" && strings.Contains(strings.Split(res, "\r\n\r\n")[1], "foobar") {
+		return true
+	}
+
+	return false
+}
+
+func URLEncodedCharsInCookieParametersValue(server, httpv string) bool {
+	fmt.Println("Checking if URL encoding allowed in cookie value...")
+
+	r := TCPeditor{}
+
+	r.Server = server
+	r.Method = "GET"
+	r.HttpVersion = httpv
+	r.Host = server
+	r.Path = "/cookie"
+	r.Headers = []string{"Cookie: input4: %66%6f%6f%62%61%72"}
+	sc, res := r.MakeRequest()
+
+	if sc == "200" && strings.Contains(strings.Split(res, "\r\n\r\n")[1], "foobar") {
+		return true
+	}
+
+	return false
 }

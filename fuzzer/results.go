@@ -1,6 +1,19 @@
 package fuzzer
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
+
+//Generate URL encoded payloads here
+func GeneratePayloads() []string {
+	payloads := []string{}
+	for i := 0; i <= 256; i++ {
+		h := fmt.Sprintf("%%"+"%x", i)
+		payloads = append(payloads, h)
+	}
+	return payloads
+}
 
 //Exported function to check if invalid request hits the server or just the proxy
 func HitsServer(sc string, res string) bool {
@@ -48,4 +61,9 @@ type ParametersBehavior struct {
 	MultipleGETParametersSameName             [3]int
 	MultiplePOSTParametersSameName            [3]int
 	MultipleCookiesParametersSameName         [3]int
+	ValidSeparatorsForGETParameters           [3][]string
+	IgnoredCharsInCookieParameters            [3][]string
+	IgnoredCharsInCookieParametersValue       [3][]string
+	URLEncodedCharsInCookieParameters         [3]bool
+	URLEncodedCharsInCookieParametersValue    [3]bool
 }
