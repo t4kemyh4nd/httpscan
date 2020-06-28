@@ -19,25 +19,33 @@ func main() {
 }
 
 func fuzzHostHeader(URL string) *fuzzer.HostBehavior {
+	fmt.Println("--------FUZZING HOST BEHAVIOR NOW--------")
 	HostResults := &fuzzer.HostBehavior{}
-	HostResults.MultipleHostsAllowed = fuzzer.MultipleHostsAllowed(URL)
-	if HostResults.MultipleHostsAllowed == true {
-		HostResults.WhichHostProcessed = fuzzer.WhichHostProcessed(URL)
+
+	HTTPVersion := []string{"1.1", "1.0", "0.9"}
+
+	for i := 0; i < len(HTTPVersion); i++ {
+		fmt.Println("Checking for HTTP version " + HTTPVersion[i])
+		HostResults.MultipleHostsAllowed[i] = fuzzer.MultipleHostsAllowed(URL, HTTPVersion[i])
+		if HostResults.MultipleHostsAllowed[i] == true {
+			HostResults.WhichHostProcessed[i] = fuzzer.WhichHostProcessed(URL, HTTPVersion[i])
+		}
+		HostResults.ValidCharsInHostHeader[i] = fuzzer.ValidCharsInHostHeader(URL, HTTPVersion[i])
+		HostResults.ValidCharsInHostHeaderPort[i] = fuzzer.ValidCharsInHostHeaderPort(URL, HTTPVersion[i])
 	}
-	HostResults.ValidCharsInHostHeader = fuzzer.ValidCharsInHostHeader(URL)
-	HostResults.ValidCharsInHostHeaderPort = fuzzer.ValidCharsInHostHeaderPort(URL)
 
 	return HostResults
 }
 
 func fuzzBasic(URL string, postData string, contentType string) *fuzzer.BasicBehavior {
-
+	fmt.Println("--------FUZZING HTTP BASIC BEHAVIOR NOW--------")
 	BasicResults := &fuzzer.BasicBehavior{}
 
 	// This array SHOULD be consistent with the BasicBehavior struct in results.go
 	HTTPVersion := []string{"1.1", "1.0", "0.9"}
 
 	for i := 0; i < len(HTTPVersion); i++ {
+		fmt.Println("Checking for HTTP version " + HTTPVersion[i])
 		BasicResults.NoCL[i] = fuzzer.NoContentLength(URL, postData, contentType, HTTPVersion[i])
 		BasicResults.MultipleCLFirst[i] = fuzzer.MultipleWrongFirst(URL, postData, contentType, HTTPVersion[i])
 		BasicResults.MultipleCLSecond[i] = fuzzer.MultipleWrongSecond(URL, postData, contentType, HTTPVersion[i])

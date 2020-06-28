@@ -13,10 +13,10 @@ func HitsServer(sc string, res string) bool {
 }
 
 type HostBehavior struct {
-	MultipleHostsAllowed       bool
-	WhichHostProcessed         int
-	ValidCharsInHostHeader     []string
-	ValidCharsInHostHeaderPort []string
+	MultipleHostsAllowed       [3]bool
+	WhichHostProcessed         [3]int
+	ValidCharsInHostHeader     [3][]string
+	ValidCharsInHostHeaderPort [3][]string
 }
 
 type BasicBehavior struct {

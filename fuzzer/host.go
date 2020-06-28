@@ -1,34 +1,28 @@
 package fuzzer
 
 import (
-	"bufio"
 	"fmt"
-	"log"
-	"net"
 	"strings"
 )
 
-func MultipleHostsAllowed(server string) bool {
+func MultipleHostsAllowed(server string, httpv string) bool {
 	fmt.Println("Checking if multiple hosts allowed...")
-	conn, err := net.Dial("tcp", server)
-	if err != nil {
-		log.Fatal(err)
-	}
+	r := TCPeditor{}
 
-	defer conn.Close()
+	r.Server = server
+	r.Method = "GET"
+	r.Path = "/host"
+	r.HttpVersion = httpv
+	r.Host = server
+	r.Headers = []string{"Host: " + server}
 
-	fmt.Fprintf(conn, "GET /host HTTP/1.1\r\nHost: %s\r\nHost: %s\r\n\r\n", server, server)
-
-	status, err := bufio.NewReader(conn).ReadString('\n')
-	if err != nil {
-		log.Fatal(err)
-	}
+	sc, _ := r.MakeRequest()
 
 	fmt.Println("Done...")
-	return strings.Contains(status, "200")
+	return sc == "200"
 }
 
-func WhichHostProcessed(server string) int {
+func WhichHostProcessed(server string, httpv string) int {
 	fmt.Println("Checking priority of host header...")
 	host1 := "x.com"
 	host2 := "y.com"
@@ -38,7 +32,7 @@ func WhichHostProcessed(server string) int {
 	r.Server = server
 	r.Method = "GET"
 	r.Path = "/host"
-	r.HttpVersion = "1.1"
+	r.HttpVersion = httpv
 	r.Host = host1
 	r.Headers = []string{"Host: " + host2}
 
@@ -60,7 +54,7 @@ func WhichHostProcessed(server string) int {
 	return 0
 }
 
-func ValidCharsInHostHeader(server string) []string {
+func ValidCharsInHostHeader(server string, httpv string) []string {
 	fmt.Println("Now fuzzing host header for accepted chars...")
 	payloads := []string{"#", "@", "aa"} //add chars to be tested here
 	acceptedChars := []string{}
@@ -69,7 +63,7 @@ func ValidCharsInHostHeader(server string) []string {
 		r.Server = server
 		r.Method = "GET"
 		r.Path = "/host"
-		r.HttpVersion = "1.1"
+		r.HttpVersion = httpv
 		r.Host = strings.Split(server, ":")[0] + string(char)
 		sc, res := r.MakeRequest()
 		if sc == "200" && strings.Contains(strings.Split(res, "\r\n\r\n")[1], strings.Split(server, ":")[0]+string(char)) {
@@ -81,7 +75,7 @@ func ValidCharsInHostHeader(server string) []string {
 	return acceptedChars
 }
 
-func ValidCharsInHostHeaderPort(server string) []string {
+func ValidCharsInHostHeaderPort(server string, httpv string) []string {
 	fmt.Println("Now fuzzing host header port for accepted chars...")
 	payloads := []string{"#", "@", "aa"} //add chars to be tested here
 	acceptedChars := []string{}
@@ -90,7 +84,7 @@ func ValidCharsInHostHeaderPort(server string) []string {
 		r.Server = server
 		r.Method = "GET"
 		r.Path = "/host"
-		r.HttpVersion = "1.1"
+		r.HttpVersion = httpv
 		r.Host = server + string(char)
 		sc, res := r.MakeRequest()
 		if sc == "200" && strings.Contains(strings.Split(res, "\r\n\r\n")[1], server+string(char)) {
