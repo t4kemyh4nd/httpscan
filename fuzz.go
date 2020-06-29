@@ -8,23 +8,28 @@ import (
 
 func main() {
 
-	/*
-		hb := &fuzzer.HostBehavior{}
-		hb = fuzzHostHeader("127.0.0.1:80")
-		fmt.Println(hb)
+	target := "127.0.0.1:80"
+	data := "input2=Testing&input3=Fuzzer"
+	contentType := "application/x-www-form-urlencoded"
+	rootPath := "/"
+	getPath := "/GET"		// all GET requests will be routed to this path
+	postPath := "/POST"		// all POST requests will be routed to this path
 
-		bb := &fuzzer.BasicBehavior{}
-		bb = fuzzBasic("127.0.0.1:80", "input2=Testing&input3=Fuzzer", "application/x-www-form-urlencoded")
-		fmt.Println(bb)
+	hb := &fuzzer.HostBehavior{}
+	hb = fuzzHostHeader(target)
+	fmt.Println(hb)
 
-		pb := &fuzzer.ParametersBehavior{}
-		pb = fuzzParameters("127.0.0.1:80")
-		fmt.Println(pb)
-	*/
+	pb := &fuzzer.ParametersBehavior{}
+	pb = fuzzParameters(target)
+	fmt.Println(pb)
 
 	ohb := &fuzzer.HeadersBehavior{}
-	ohb = fuzzHeaders("127.0.0.1:80")
+	ohb = fuzzHeaders(target)
 	fmt.Println(ohb)
+
+	bb := &fuzzer.BasicBehavior{}
+	bb = fuzzBasic(target,data,contentType,getPath,postPath,rootPath)
+	fmt.Println(bb)
 }
 
 func fuzzHostHeader(URL string) *fuzzer.HostBehavior {
@@ -47,7 +52,7 @@ func fuzzHostHeader(URL string) *fuzzer.HostBehavior {
 	return HostResults
 }
 
-func fuzzBasic(URL string, postData string, contentType string) *fuzzer.BasicBehavior {
+func fuzzBasic(URL string, postData string, contentType string, getPath string, postPath string, rootPath string) *fuzzer.BasicBehavior {
 	fmt.Println("--------FUZZING HTTP BASIC BEHAVIOR NOW--------")
 	BasicResults := &fuzzer.BasicBehavior{}
 
@@ -56,30 +61,45 @@ func fuzzBasic(URL string, postData string, contentType string) *fuzzer.BasicBeh
 
 	for i := 0; i < len(HTTPVersion); i++ {
 		fmt.Println("Checking for HTTP version " + HTTPVersion[i])
-		BasicResults.NoCL[i] = fuzzer.NoContentLength(URL, postData, contentType, HTTPVersion[i])
-		BasicResults.MultipleCLFirst[i] = fuzzer.MultipleWrongFirst(URL, postData, contentType, HTTPVersion[i])
-		BasicResults.MultipleCLSecond[i] = fuzzer.MultipleWrongSecond(URL, postData, contentType, HTTPVersion[i])
-		BasicResults.SmallCL[i] = fuzzer.SmallerCL(URL, postData, contentType, HTTPVersion[i])
-		// Checks POST requests with the a larger content-length
+		BasicResults.NoCL[i] = fuzzer.NoContentLength(URL, postData, contentType, HTTPVersion[i],postPath)
+		BasicResults.MultipleCLFirst[i] = fuzzer.MultipleWrongFirst(URL, postData, contentType, HTTPVersion[i],postPath,"POST")
+		BasicResults.MultipleCLSecond[i] = fuzzer.MultipleWrongSecond(URL, postData, contentType, HTTPVersion[i],postPath,"POST")
+		BasicResults.SmallCL[i] = fuzzer.SmallerCL(URL, postData, contentType, HTTPVersion[i],postPath,"POST")
+		BasicResults.GetAsPost[i] = fuzzer.GetAsPost(URL, postPath, postData , contentType , HTTPVersion[i])
+		BasicResults.GetMultipleCLFirst[i] = fuzzer.GetAsPostCLFirst(URL, postPath, postData , contentType , HTTPVersion[i])
+		BasicResults.GetMultipleCLSecond[i] = fuzzer.GetAsPostCLSecond(URL, postPath, postData , contentType , HTTPVersion[i])
+		BasicResults.GetSmallCL[i] = fuzzer.GetAsPostSmall(URL, postPath, postData , contentType , HTTPVersion[i])
+		BasicResults.GetLargeCL[i] = fuzzer.GetAsPostLarge(URL, postPath, postData , contentType , HTTPVersion[i])
 		// IMPLEMENT A TIMEOUT FOR THE FUNCTION
-		//BasicResults.LargeCL[i] = fuzzer.LargerCL(URL,postData,contentType,HTTPVersion[i])
+		//BasicResults.LargeCL[i] = fuzzer.LargerCL(URL,postData,contentType,HTTPVersion[i],postPath,"POST")
 	}
-
+	BasicResults.GetRelative[0] = fuzzer.RelativePath(URL,postData,contentType,getPath,"GET")
+	BasicResults.GetAbsolute[0] = fuzzer.AbsolutePath(URL,postData,contentType,getPath,"GET")
+	BasicResults.PostRelative[0] = fuzzer.RelativePath(URL,postData,contentType,postPath,"POST")
+	BasicResults.PostAbsolute[0] = fuzzer.AbsolutePath(URL,postData,contentType,postPath,"POST")
+	BasicResults.XAsPostGetPath[0] = fuzzer.PostAsGet(URL,postData,getPath)
+	BasicResults.XAsPostPostPath[0] = fuzzer.PostAsGet(URL,postData,postPath)
+	BasicResults.AllowedCharVerb = fuzzer.InvalidHTTPVerb(URL, postPath, postData, contentType)
+	BasicResults.AllowedCharVerbPath = fuzzer.ValidBetweenVerbPath(URL, getPath)
+	//Implement timeout for this functions
+	//BasicResults.AllowedInvalidGetHTTP, BasicResults.AllowedInvalidPostHTTP = initiateInvalidHTTP(URL,postData,getPath,postPath)
 	return BasicResults
 }
 
-// COMPLETE LATER
-func initiateInvalidHTTP(URL string, postData string) {
+func initiateInvalidHTTP(URL string, postData string, getPath string, postPath string) ([][]bool, [][]bool){
+	// This is tied to the BasicBehavior struct in results.go 
+	InvalidVersions := []string{"00000001.1","1.10","0.123","1.10000000","1.19","2.0",".9","0.99","9.9","ABC"}
 
-	// Add invalid HTTP values
-	//BasicResults := &fuzzer.BasicBehavior{}
+	GetResults := [][]bool{}
+	PostResults := [][]bool{}
 
-	InvalidVersions := []string{"1.1", "1.10000000", "1.19", "2.0", ".9", "0.99", "9.9", "00000001.1", "1.10"}
-
-	for i := 0; i < len(InvalidVersions); i++ {
-		fmt.Println("\nTesting " + InvalidVersions[i])
-		fmt.Println(fuzzer.InvalidHTTPv(URL, InvalidVersions[i], "GET", ""))
+	for i:=0;i<len(InvalidVersions);i++{
+		fmt.Println("\nTesting HTTP version: " + InvalidVersions[i])
+		// Implement timeouts for both of these functions
+		GetResults = append(GetResults, fuzzer.InvalidHTTPv(URL,InvalidVersions[i],"GET", "", getPath))
+		PostResults = append(PostResults, fuzzer.InvalidHTTPv(URL,InvalidVersions[i],"POST", postData, postPath))
 	}
+	return GetResults, PostResults
 }
 
 func fuzzParameters(URL string) *fuzzer.ParametersBehavior {
