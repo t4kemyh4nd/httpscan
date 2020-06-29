@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -32,10 +31,11 @@ func POSTHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func HeadersHandler(w http.ResponseWriter, r *http.Request) {
-	if reqHeadersBytes, err := json.Marshal(r.Header); err != nil {
-		log.Println(err)
-	} else {
-		fmt.Fprintf(w, string(reqHeadersBytes))
+	for name, values := range r.Header {
+		// Loop over all values for the name.
+		for _, value := range values {
+			fmt.Fprintf(w, "%s: %s\r\n", name, value)
+		}
 	}
 }
 
