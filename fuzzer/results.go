@@ -84,4 +84,6 @@ type HeadersBehavior struct {
 	IgnoredCharsBetweenHeaderValue [3][]string
 	ValidCharsBeforeHeaders        [3][]string
 	ValidCharsBeforeColon          [3][]string
+	ValidCharsAfterColon           [3][]string
+	ValidHeaderSeparators          [3][]string
 }

@@ -121,9 +121,11 @@ func fuzzHeaders(URL string) *fuzzer.HeadersBehavior {
 
 	for i := 0; i < len(HTTPVersion); i++ {
 		fmt.Println("Checking for HTTP version " + HTTPVersion[i])
-		//HeaderResults.IgnoredCharsBetweenHeaderValue[i] = fuzzer.IgnoredCharsBetweenHeaderValue(URL, HTTPVersion[i])
+		HeaderResults.IgnoredCharsBetweenHeaderValue[i] = fuzzer.IgnoredCharsBetweenHeaderValue(URL, HTTPVersion[i])
 		HeaderResults.ValidCharsBeforeHeaders[i] = fuzzer.ValidCharsBeforeHeaders(URL, HTTPVersion[i])
-		//HeaderResults.ValidCharsBeforeColon[i] = fuzzer.ValidCharsBeforeColon(URL, HTTPVersion[i])
+		HeaderResults.ValidCharsBeforeColon[i] = fuzzer.ValidCharsBeforeColon(URL, HTTPVersion[i])
+		HeaderResults.ValidCharsAfterColon[i] = fuzzer.ValidCharsAfterColon(URL, HTTPVersion[i])
+		HeaderResults.ValidHeaderSeparators[i] = fuzzer.ValidHeaderSeparators(URL, HTTPVersion[i])
 	}
 
 	return HeaderResults
