@@ -126,6 +126,8 @@ func fuzzHeaders(URL string) *fuzzer.HeadersBehavior {
 		HeaderResults.ValidCharsBeforeColon[i] = fuzzer.ValidCharsBeforeColon(URL, HTTPVersion[i])
 		HeaderResults.ValidCharsAfterColon[i] = fuzzer.ValidCharsAfterColon(URL, HTTPVersion[i])
 		HeaderResults.ValidHeaderSeparators[i] = fuzzer.ValidHeaderSeparators(URL, HTTPVersion[i])
+		HeaderResults.ValidCharsInHeaderName[i] = fuzzer.ValidCharsInHeaderName(URL, HTTPVersion[i])
+		HeaderResults.ValidCharsInHeaderValue[i] = fuzzer.ValidCharsInHeaderValue(URL, HTTPVersion[i])
 	}
 
 	return HeaderResults

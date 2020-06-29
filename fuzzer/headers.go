@@ -135,3 +135,49 @@ func ValidHeaderSeparators(server, httpv string) []string {
 	fmt.Println("Done...")
 	return acceptedChars
 }
+
+func ValidCharsInHeaderName(server, httpv string) []string {
+	fmt.Println("Now checking for valid chars in header names...")
+	payloads := GenerateURLEncodedPayloads()
+	acceptedChars := []string{}
+	r := TCPeditor{}
+	r.Server = server
+	r.Method = "GET"
+	r.Path = "/headers"
+	r.HttpVersion = httpv
+	r.Host = server
+	for _, chars := range payloads {
+		char, _ := url.PathUnescape(chars)
+		r.Headers = []string{"Fo" + string(char) + "o: bar"}
+		sc, res := r.MakeRequest()
+		if sc == "200" && strings.Contains(strings.ToLower(res), "fo"+string(char)+"o: bar") {
+			acceptedChars = append(acceptedChars, url.PathEscape(char))
+		}
+	}
+
+	fmt.Println("Done...")
+	return acceptedChars
+}
+
+func ValidCharsInHeaderValue(server, httpv string) []string {
+	fmt.Println("Now checking for valid chars in header values...")
+	payloads := GenerateURLEncodedPayloads()
+	acceptedChars := []string{}
+	r := TCPeditor{}
+	r.Server = server
+	r.Method = "GET"
+	r.Path = "/headers"
+	r.HttpVersion = httpv
+	r.Host = server
+	for _, chars := range payloads {
+		char, _ := url.PathUnescape(chars)
+		r.Headers = []string{"Foo: ba" + string(char) + "r"}
+		sc, res := r.MakeRequest()
+		if sc == "200" && strings.Contains(strings.ToLower(res), "foo: ba"+string(char)+"r") {
+			acceptedChars = append(acceptedChars, url.PathEscape(char))
+		}
+	}
+
+	fmt.Println("Done...")
+	return acceptedChars
+}
