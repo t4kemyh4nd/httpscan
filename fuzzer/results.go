@@ -13,7 +13,6 @@ func GenerateURLEncodedPayloads() []string {
 		payloads = append(payloads, h)
 	}
 	return payloads
-<<<<<<< HEAD
 }
 
 func GenerateHexBytesPayloads() []string {
@@ -41,79 +40,33 @@ type HostBehavior struct {
 	ValidCharsInHostHeader     [3][]string
 	ValidCharsInHostHeaderPort [3][]string
 	NoHost                     [3]bool
-=======
->>>>>>> a9dfa37b5b44298f2ecc1cb78a09c1e094197609
 }
-
-func GenerateHexBytesPayloads() []string {
-	payloads := []string{"\x00", "\x01", "\x02", "\x03", "\x04", "\x05", "\x06", "\x07", "\x08", "\x09", "\x0a", "\x0b", "\x0c", "\x0d", "\x0e", "\x0f"}
-	for i := 16; i <= 256; i++ {
-		h := fmt.Sprintf("\\x"+"%x", i)
-		payloads = append(payloads, h)
-	}
-	return payloads
-}
-
-<<<<<<< HEAD
-	// Content length section
-=======
-//Exported function to check if invalid request hits the server or just the proxy
-func HitsServer(sc string, res string) bool {
-	if sc != "200" && sc[0] == '4' {
-		if strings.Contains(res, "Server: ") {
-			return true
-		}
-	}
-	return false
-}
-
-type HostBehavior struct {
-	MultipleHostsAllowed       [3]bool
-	WhichHostProcessed         [3]int
-	ValidCharsInHostHeader     [3][]string
-	ValidCharsInHostHeaderPort [3][]string
-	NoHost                     [3]bool
-}
->>>>>>> a9dfa37b5b44298f2ecc1cb78a09c1e094197609
 
 type BasicBehavior struct {
 	// Based on the array indices:
 	// 0 - HTTP 1.1
 	// 1 - HTTP 1.0
 	// 2 - HTTP 0.9
-<<<<<<< HEAD
-	NoCL             [3][]bool
-	MultipleCLFirst  [3][]bool
-	MultipleCLSecond [3][]bool
-	SmallCL          [3][]bool
-	LargeCL          [3][]bool
-
-	// Invalid HTTP version section
-	/*	V100			bool
-	 */
-=======
-	NoCL            	 [3][]bool
-	MultipleCLFirst 	 [3][]bool
-	MultipleCLSecond	 [3][]bool
-	SmallCL         	 [3][]bool
-	LargeCL         	 [3][]bool
-	GetRelative		 [1][]bool
-	GetAbsolute		 [1][]bool
-	PostRelative		 [1][]bool
-	PostAbsolute		 [1][]bool
-	XAsPostGetPath		 [1][]bool
-	XAsPostPostPath		 [1][]bool
-	AllowedCharVerb		 []string
-	GetAsPost		 [3][]bool
-	GetMultipleCLFirst 	 [3][]bool
-	GetMultipleCLSecond 	 [3][]bool
-	GetSmallCL     		 [3][]bool
-	GetLargeCL	      	 [3][]bool
-	AllowedCharVerbPath 	 []string
-	AllowedInvalidGetHTTP	 [][]bool
-	AllowedInvalidPostHTTP	 [][]bool
-
->>>>>>> a9dfa37b5b44298f2ecc1cb78a09c1e094197609
+	NoCL                   [3][]bool
+	MultipleCLFirst        [3][]bool
+	MultipleCLSecond       [3][]bool
+	SmallCL                [3][]bool
+	LargeCL                [3][]bool
+	GetRelative            [1][]bool
+	GetAbsolute            [1][]bool
+	PostRelative           [1][]bool
+	PostAbsolute           [1][]bool
+	XAsPostGetPath         [1][]bool
+	XAsPostPostPath        [1][]bool
+	AllowedCharVerb        []string
+	GetAsPost              [3][]bool
+	GetMultipleCLFirst     [3][]bool
+	GetMultipleCLSecond    [3][]bool
+	GetSmallCL             [3][]bool
+	GetLargeCL             [3][]bool
+	AllowedCharVerbPath    []string
+	AllowedInvalidGetHTTP  [][]bool
+	AllowedInvalidPostHTTP [][]bool
 }
 
 type ParametersBehavior struct {
