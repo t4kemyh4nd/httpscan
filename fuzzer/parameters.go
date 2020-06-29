@@ -173,7 +173,7 @@ func MultipleCookiesParametersSameName(server, httpv string) int {
 func ValidSeparatorsForGETParameters(server, httpv string) []string {
 	fmt.Println("Checking for valid separators in GET parameters...")
 
-	payloads := GeneratePayloads() //Chars to test here
+	payloads := GenerateURLEncodedPayloads() //Chars to test here
 	results := []string{}
 
 	r := TCPeditor{}
@@ -187,7 +187,7 @@ func ValidSeparatorsForGETParameters(server, httpv string) []string {
 		r.Path = "/GET?input0=foo" + char + "input1=bar"
 		sc, res := r.MakeRequest()
 
-		if sc == "200" && strings.Contains(strings.Split(res, "\r\n\r\n")[1], "foo") && strings.Contains(strings.Split(res, "\r\n\r\n")[1], "bar") {
+		if sc == "200" && strings.Contains(res, "foo") && strings.Contains(res, "bar") {
 			results = append(results, chars)
 		}
 	}
@@ -198,7 +198,7 @@ func ValidSeparatorsForGETParameters(server, httpv string) []string {
 func ValidSeparatorsForPOSTParameters(server, httpv string) []string {
 	fmt.Println("Checking for valid separators in POST parameters...")
 
-	payloads := GeneratePayloads() //Chars to test here
+	payloads := GenerateURLEncodedPayloads() //Chars to test here
 	results := []string{}
 
 	r := TCPeditor{}
@@ -215,7 +215,7 @@ func ValidSeparatorsForPOSTParameters(server, httpv string) []string {
 		r.Body = "input2=foo" + char + "input3=bar"
 		sc, res := r.MakeRequest()
 
-		if sc == "200" && strings.Contains(strings.Split(res, "\r\n\r\n")[1], "foo") && strings.Contains(strings.Split(res, "\r\n\r\n")[1], "bar") {
+		if sc == "200" && strings.Contains(res, "foo") && strings.Contains(res, "bar") {
 			results = append(results, chars)
 		}
 	}
@@ -226,7 +226,7 @@ func ValidSeparatorsForPOSTParameters(server, httpv string) []string {
 func IgnoredCharsInCookieParameters(server, httpv string) []string {
 	fmt.Println("Checking for ignored chars in cookie names...")
 
-	payloads := GeneratePayloads() //Chars to test here
+	payloads := GenerateURLEncodedPayloads() //Chars to test here
 	results := []string{}
 
 	r := TCPeditor{}
@@ -241,7 +241,7 @@ func IgnoredCharsInCookieParameters(server, httpv string) []string {
 		r.Headers = []string{"Cookie: inpu" + char + "t4: foobar"}
 		sc, res := r.MakeRequest()
 
-		if sc == "200" && strings.Contains(strings.Split(res, "\r\n\r\n")[1], "foobar") {
+		if sc == "200" && strings.Contains(res, "foobar") {
 			results = append(results, chars)
 		}
 	}
@@ -252,7 +252,7 @@ func IgnoredCharsInCookieParameters(server, httpv string) []string {
 func IgnoredCharsInCookieParametersValue(server, httpv string) []string {
 	fmt.Println("Checking for ignored chars in cookie values...")
 
-	payloads := GeneratePayloads() //Chars to test here
+	payloads := GenerateURLEncodedPayloads() //Chars to test here
 	results := []string{}
 
 	r := TCPeditor{}
@@ -267,7 +267,7 @@ func IgnoredCharsInCookieParametersValue(server, httpv string) []string {
 		r.Headers = []string{"Cookie: input4: fo" + char + "obar"}
 		sc, res := r.MakeRequest()
 
-		if sc == "200" && strings.Contains(strings.Split(res, "\r\n\r\n")[1], "foobar") {
+		if sc == "200" && strings.Contains(res, "foobar") {
 			results = append(results, chars)
 		}
 	}
@@ -288,7 +288,7 @@ func URLEncodedCharsInCookieParameters(server, httpv string) bool {
 	r.Headers = []string{"Cookie: %69%6e%70%75%74%34: foobar"}
 	sc, res := r.MakeRequest()
 
-	if sc == "200" && strings.Contains(strings.Split(res, "\r\n\r\n")[1], "foobar") {
+	if sc == "200" && strings.Contains(res, "foobar") {
 		return true
 	}
 
@@ -308,7 +308,7 @@ func URLEncodedCharsInCookieParametersValue(server, httpv string) bool {
 	r.Headers = []string{"Cookie: input4: %66%6f%6f%62%61%72"}
 	sc, res := r.MakeRequest()
 
-	if sc == "200" && strings.Contains(strings.Split(res, "\r\n\r\n")[1], "foobar") {
+	if sc == "200" && strings.Contains(res, "foobar") {
 		return true
 	}
 
@@ -318,7 +318,7 @@ func URLEncodedCharsInCookieParametersValue(server, httpv string) bool {
 func IgnoredCharsBeforeGETParameters(server, httpv string) []string {
 	fmt.Println("Checking for ignored chars before GET parameters...")
 
-	payloads := GeneratePayloads() //Chars to test here
+	payloads := GenerateURLEncodedPayloads() //Chars to test here
 	results := []string{}
 
 	r := TCPeditor{}
@@ -332,7 +332,7 @@ func IgnoredCharsBeforeGETParameters(server, httpv string) []string {
 		r.Path = "/GET?" + char + "input0=foo&input1=bar"
 		sc, res := r.MakeRequest()
 
-		if sc == "200" && strings.Contains(strings.Split(res, "\r\n\r\n")[1], "foo") && strings.Contains(strings.Split(res, "\r\n\r\n")[1], "bar") {
+		if sc == "200" && strings.Contains(res, "foo") && strings.Contains(res, "bar") {
 			results = append(results, chars)
 		}
 	}
@@ -343,7 +343,7 @@ func IgnoredCharsBeforeGETParameters(server, httpv string) []string {
 func IgnoredCharsBetweenGETParameters(server, httpv string) []string {
 	fmt.Println("Checking for ignored chars between GET parameters...")
 
-	payloads := GeneratePayloads() //Chars to test here
+	payloads := GenerateURLEncodedPayloads() //Chars to test here
 	results := []string{}
 
 	r := TCPeditor{}
@@ -357,7 +357,7 @@ func IgnoredCharsBetweenGETParameters(server, httpv string) []string {
 		r.Path = "/GET?inp" + char + "ut0=foo&input1=bar"
 		sc, res := r.MakeRequest()
 
-		if sc == "200" && strings.Contains(strings.Split(res, "\r\n\r\n")[1], "foo") && strings.Contains(strings.Split(res, "\r\n\r\n")[1], "bar") {
+		if sc == "200" && strings.Contains(res, "foo") && strings.Contains(res, "bar") {
 			results = append(results, chars)
 		}
 	}
@@ -368,7 +368,7 @@ func IgnoredCharsBetweenGETParameters(server, httpv string) []string {
 func IgnoredCharsAfterGETParameters(server, httpv string) []string {
 	fmt.Println("Checking for ignored chars after GET parameters...")
 
-	payloads := GeneratePayloads() //Chars to test here
+	payloads := GenerateURLEncodedPayloads() //Chars to test here
 	results := []string{}
 
 	r := TCPeditor{}
@@ -383,7 +383,7 @@ func IgnoredCharsAfterGETParameters(server, httpv string) []string {
 		sc, res := r.MakeRequest()
 
 		//Checks if the response body ENDS with "bar"
-		if sc == "200" && strings.Contains(strings.Split(res, "\r\n\r\n")[1], "foo") && strings.HasSuffix(strings.Split(res, "\r\n\r\n")[1], "bar") {
+		if sc == "200" && strings.Contains(res, "foo") && strings.HasSuffix(res, "bar") {
 			results = append(results, chars)
 		}
 	}

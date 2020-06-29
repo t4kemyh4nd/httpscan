@@ -6,10 +6,19 @@ import (
 )
 
 //Generate URL encoded payloads here
-func GeneratePayloads() []string {
+func GenerateURLEncodedPayloads() []string {
 	payloads := []string{"%00", "%01", "%02", "%03", "%04", "%05", "%06", "%07", "%08", "%09", "%0a", "%0b", "%0c", "%0d", "%0e", "%0f"}
 	for i := 16; i <= 256; i++ {
 		h := fmt.Sprintf("%%"+"%x", i)
+		payloads = append(payloads, h)
+	}
+	return payloads
+}
+
+func GenerateHexBytesPayloads() []string {
+	payloads := []string{"\x00", "\x01", "\x02", "\x03", "\x04", "\x05", "\x06", "\x07", "\x08", "\x09", "\x0a", "\x0b", "\x0c", "\x0d", "\x0e", "\x0f"}
+	for i := 16; i <= 256; i++ {
+		h := fmt.Sprintf("\\x"+"%x", i)
 		payloads = append(payloads, h)
 	}
 	return payloads
@@ -69,4 +78,10 @@ type ParametersBehavior struct {
 	IgnoredCharsBeforeGETParameters           [3][]string
 	IgnoredCharsBetweenGETParameters          [3][]string
 	IgnoredCharsAfterGETParameters            [3][]string
+}
+
+type HeadersBehavior struct {
+	IgnoredCharsBetweenHeaderValue [3][]string
+	ValidCharsBeforeHeaders        [3][]string
+	ValidCharsBeforeColon          [3][]string
 }

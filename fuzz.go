@@ -8,17 +8,23 @@ import (
 
 func main() {
 
-	hb := &fuzzer.HostBehavior{}
-	hb = fuzzHostHeader("127.0.0.1:80")
-	fmt.Println(hb)
+	/*
+		hb := &fuzzer.HostBehavior{}
+		hb = fuzzHostHeader("127.0.0.1:80")
+		fmt.Println(hb)
 
-	bb := &fuzzer.BasicBehavior{}
-	bb = fuzzBasic("127.0.0.1:80", "input2=Testing&input3=Fuzzer", "application/x-www-form-urlencoded")
-	fmt.Println(bb)
+		bb := &fuzzer.BasicBehavior{}
+		bb = fuzzBasic("127.0.0.1:80", "input2=Testing&input3=Fuzzer", "application/x-www-form-urlencoded")
+		fmt.Println(bb)
 
-	pb := &fuzzer.ParametersBehavior{}
-	pb = fuzzParameters("127.0.0.1:80")
-	fmt.Println(pb)
+		pb := &fuzzer.ParametersBehavior{}
+		pb = fuzzParameters("127.0.0.1:80")
+		fmt.Println(pb)
+	*/
+
+	ohb := &fuzzer.HeadersBehavior{}
+	ohb = fuzzHeaders("127.0.0.1:80")
+	fmt.Println(ohb)
 }
 
 func fuzzHostHeader(URL string) *fuzzer.HostBehavior {
@@ -104,4 +110,21 @@ func fuzzParameters(URL string) *fuzzer.ParametersBehavior {
 	}
 
 	return ParameterResults
+}
+
+func fuzzHeaders(URL string) *fuzzer.HeadersBehavior {
+	fmt.Println("--------FUZZING HEADERS BEHAVIOR NOW--------")
+	HeaderResults := &fuzzer.HeadersBehavior{}
+
+	// This array SHOULD be consistent with the BasicBehavior struct in results.go
+	HTTPVersion := []string{"1.1", "1.0", "0.9"}
+
+	for i := 0; i < len(HTTPVersion); i++ {
+		fmt.Println("Checking for HTTP version " + HTTPVersion[i])
+		//HeaderResults.IgnoredCharsBetweenHeaderValue[i] = fuzzer.IgnoredCharsBetweenHeaderValue(URL, HTTPVersion[i])
+		HeaderResults.ValidCharsBeforeHeaders[i] = fuzzer.ValidCharsBeforeHeaders(URL, HTTPVersion[i])
+		//HeaderResults.ValidCharsBeforeColon[i] = fuzzer.ValidCharsBeforeColon(URL, HTTPVersion[i])
+	}
+
+	return HeaderResults
 }

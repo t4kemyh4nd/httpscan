@@ -54,10 +54,16 @@ func (t TCPeditor) MakeRequest() (string, string) {
 		log.Fatal(err)
 	}
 
-	lines := strings.Split(string(response), "\n")
+	if t.HttpVersion == "1.1" || t.HttpVersion == "1.0" {
+		lines := strings.Split(string(response), "\n")
 
-	if len(response) > 0 {
-		return strings.Split(lines[0], " ")[1], string(response)
+		if len(response) > 0 {
+			return strings.Split(lines[0], " ")[1], string(response)
+		}
+	} else if t.HttpVersion == "0.9" {
+		if len(response) > 0 {
+			return "200", string(response)
+		}
 	}
 	return "000", ""
 }

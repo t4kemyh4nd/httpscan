@@ -70,7 +70,7 @@ func ValidCharsInHostHeader(server string, httpv string) []string {
 		r.HttpVersion = httpv
 		r.Host = strings.Split(server, ":")[0] + string(char)
 		sc, res := r.MakeRequest()
-		if sc == "200" && strings.Contains(strings.Split(res, "\r\n\r\n")[1], strings.Split(server, ":")[0]+string(char)) {
+		if sc == "200" && strings.Contains(res, strings.Split(server, ":")[0]+string(char)) {
 			acceptedChars = append(acceptedChars, char)
 		}
 	}
@@ -81,18 +81,18 @@ func ValidCharsInHostHeader(server string, httpv string) []string {
 
 func ValidCharsInHostHeaderPort(server string, httpv string) []string {
 	fmt.Println("Now fuzzing host header port for accepted chars...")
-	payloads := GeneratePayloads()
+	payloads := GenerateURLEncodedPayloads()
 	acceptedChars := []string{}
+	r := TCPeditor{}
+	r.Server = server
+	r.Method = "GET"
+	r.Path = "/host"
+	r.HttpVersion = httpv
 	for _, chars := range payloads {
-		r := TCPeditor{}
-		r.Server = server
-		r.Method = "GET"
-		r.Path = "/host"
-		r.HttpVersion = httpv
 		char, _ := url.PathUnescape(chars)
 		r.Host = server + string(char)
 		sc, res := r.MakeRequest()
-		if sc == "200" && strings.Contains(strings.Split(res, "\r\n\r\n")[1], server+string(char)) {
+		if sc == "200" && strings.Contains(res, server+string(char)) {
 			acceptedChars = append(acceptedChars, char)
 		}
 	}
