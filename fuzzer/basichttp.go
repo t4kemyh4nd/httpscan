@@ -279,6 +279,7 @@ func GetAsPost(URL string, path string, postData string, contentType string, HTT
 	r.Body = postData
 	sc, res := r.MakeRequest()
 
+	defer fmt.Println("Done...")
 	if sc == "200" {
 		if strings.Contains(res, "input2=Testing, input3=Fuzzer") {
 			return []bool{true, true}
