@@ -97,3 +97,7 @@ type HeadersBehavior struct {
 	ValidCharsInHeaderName         [3][]string
 	ValidCharsInHeaderValue        [3][]string
 }
+
+type CharsetsBehavior struct {
+	ValidCharsets [3][]string
+}

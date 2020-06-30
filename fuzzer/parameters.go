@@ -187,8 +187,10 @@ func ValidSeparatorsForGETParameters(server, httpv string) []string {
 		r.Path = "/GET?input0=foo" + char + "input1=bar"
 		sc, res := r.MakeRequest()
 
-		if sc == "200" && strings.Contains(res, "foo") && strings.Contains(res, "bar") {
-			results = append(results, chars)
+		if sc == "200" {
+			if strings.Contains(res, "foo") && strings.Contains(res, "bar") {
+				results = append(results, chars)
+			}
 		}
 	}
 
