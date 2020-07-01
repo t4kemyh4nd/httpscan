@@ -62,12 +62,11 @@ type BasicBehavior struct {
 	GetAsPost		 [3][]bool
 	GetMultipleCLFirst 	 [3][]bool
 	GetMultipleCLSecond 	 [3][]bool
-	GetSmallCL     		 [3][]bool
-	GetLargeCL	      	 [3][]bool
-	AllowedCharVerbPath 	 []string
-	AllowedInvalidGetHTTP	 [][]bool
-	AllowedInvalidPostHTTP	 [][]bool
-
+	GetSmallCL     	  	 [3][]bool
+	GetLargeCL	         [3][]bool
+	AllowedCharVerbPath      []string
+	AllowedInvalidGetHTTP  	 [][]bool
+	AllowedInvalidPostHTTP 	 [][]bool
 }
 
 type ParametersBehavior struct {
@@ -89,6 +88,15 @@ type ParametersBehavior struct {
 	IgnoredCharsAfterGETParameters            [3][]string
 }
 
+type PathBehavior struct{
+	AllowedCharsAfterPath 			[]string
+	AllowedCharsBetweenSlashes		[]string
+	AllowedCharsBetweenSlashesEncoded	[]string
+	AllowedCharsAsSlash			[]string
+	URLEncodedSingleCharFile		bool
+	ReplaceDotInExtension			bool
+}
+
 type HeadersBehavior struct {
 	IgnoredCharsBetweenHeaderValue [3][]string
 	ValidCharsBeforeHeaders        [3][]string
@@ -97,4 +105,8 @@ type HeadersBehavior struct {
 	ValidHeaderSeparators          [3][]string
 	ValidCharsInHeaderName         [3][]string
 	ValidCharsInHeaderValue        [3][]string
+}
+
+type CharsetsBehavior struct {
+	ValidCharsets [3][]string
 }

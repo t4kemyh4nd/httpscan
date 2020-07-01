@@ -13,6 +13,8 @@ func main() {
 	http.HandleFunc("/headers", HeadersHandler)
 	http.HandleFunc("/host", HostHandler)
 	http.HandleFunc("/cookie", CookieHandler)
+	// starts a static file server. e.g. 127.0.0.1/static/sample.txt
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./fuzzer"))))
 	log.Fatal(http.ListenAndServe(":80", nil))
 }
 
