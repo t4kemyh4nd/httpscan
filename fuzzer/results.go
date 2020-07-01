@@ -88,6 +88,15 @@ type ParametersBehavior struct {
 	IgnoredCharsAfterGETParameters            [3][]string
 }
 
+type PathBehavior struct {
+	AllowedCharsAfterPath             []string
+	AllowedCharsBetweenSlashes        []string
+	AllowedCharsBetweenSlashesEncoded []string
+	AllowedCharsAsSlash               []string
+	URLEncodedSingleCharFile          bool
+	ReplaceDotInExtension             bool
+}
+
 type HeadersBehavior struct {
 	IgnoredCharsBetweenHeaderValue [3][]string
 	ValidCharsBeforeHeaders        [3][]string

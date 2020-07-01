@@ -13,15 +13,18 @@ func InvalidHTTPv(URL string, HTTPv string, method string, postData string, path
 	r := TCPeditor{}
 	r.Server = URL
 	r.Host = URL
-	r.Method = method
+	r.Method = string(method)
 	r.HttpVersion = HTTPv
 	r.Path = path
 	if method == "POST" {
+		r.Body = postData
 		r.Headers = []string{"Content-Type: application/x-www-form-urlencoded", "Content-Length: " + strconv.Itoa(len(postData))}
 	}
 
 	sc, res := r.MakeRequest()
+
 	defer fmt.Println("Done...")
+	fmt.Println(r.Server, r.Path, sc, res)
 	if sc == "200" {
 		return []bool{true, true}
 	}
@@ -30,7 +33,7 @@ func InvalidHTTPv(URL string, HTTPv string, method string, postData string, path
 
 //	Sends a POST request without the Content-Length header
 func NoContentLength(URL string, postData string, contentType string, HTTPv string, path string) []bool {
-	fmt.Println("Checking behaviour with absense of CL header...")
+	fmt.Println("Checking behaviour with absence of CL header...")
 	r := TCPeditor{}
 	r.Server = URL
 	r.Host = URL
@@ -136,7 +139,7 @@ func LargerCL(URL string, postData string, contentType string, HTTPv string, pat
 
 // Sends a header as Content_Length
 func InvalidCLHeader(URL string, postData string, contentType string, HTTPv string, path string, method string) []bool {
-	fmt.Println("Checking for larger CL header as Content_Length...")
+	fmt.Println("Checking for CL header as Content_Length...")
 	r := TCPeditor{}
 	r.Server = URL
 	r.Host = URL
@@ -201,8 +204,6 @@ func AbsolutePath(URL string, postData string, contentType string, path string, 
 	}
 	return []bool{false, HitsServer(sc, res)}
 }
-
-// Lines 385
 
 func XAsPost(URL string, postData string, contentType string, path string) []bool {
 	fmt.Println("Sending POST with verb as TEST...")
@@ -279,7 +280,6 @@ func GetAsPost(URL string, path string, postData string, contentType string, HTT
 	r.Body = postData
 	sc, res := r.MakeRequest()
 
-	defer fmt.Println("Done...")
 	if sc == "200" {
 		if strings.Contains(res, "input2=Testing, input3=Fuzzer") {
 			return []bool{true, true}
@@ -368,6 +368,7 @@ func GetAsPostLarge(URL string, path string, postData string, contentType string
 	return []bool{false, HitsServer(sc, res)}
 }
 
+// Finds characters that are valid between the verv and path
 func ValidBetweenVerbPath(URL string, path string) []string {
 	fmt.Println("Fuzzing for allowed characters between Verb and path...")
 	r := TCPeditor{}
